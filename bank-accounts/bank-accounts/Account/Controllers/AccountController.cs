@@ -17,7 +17,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("/account")]
-    public IActionResult CreateAccount([FromBody] CreateAccountDto accountDto)
+    public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto accountDto)
     {
         var account = new CreateAccountCommand
         {
@@ -29,14 +29,9 @@ public class AccountController : ControllerBase
             
         };
         
-        var result = _mediator.Send(account);
-        if (result.IsCompletedSuccessfully)
-        {
-            return Ok(result.Result);
-        }
-        else
-        {
-            return BadRequest(result.Result);
-        }
+        var result = await _mediator.Send(account);
+            
+        return Ok(result);
+        
     }
 }
