@@ -2,8 +2,8 @@ namespace bank_accounts.Account.Enums
 {
     public enum AccountType
     {
-        Checking,
-        Deposit,
-        Credit
+        Checking, //Обычный расчётный счёт
+        Deposit, //Вклад или накопительный счёт.
+        Credit //кредитная линия
     }
 }

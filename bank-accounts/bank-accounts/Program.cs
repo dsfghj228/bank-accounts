@@ -8,11 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAdB2C"));
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "bank-accounts", Version = "v1" });
 });
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
 
 var app = builder.Build();
 

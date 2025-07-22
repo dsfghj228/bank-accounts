@@ -1,6 +1,6 @@
 using bank_accounts.Account.Enums;
 
-namespace bank_accounts.Account
+namespace bank_accounts.Account.Models
 {
     public class Transaction
     {
