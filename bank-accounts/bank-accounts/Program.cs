@@ -7,8 +7,23 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddProblemDetails(o =>
+{
+    o.IncludeExceptionDetails = (ctx, ex) => false;
+    
+    o.Map<CustomExceptions.OwnerNotFoundException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+});
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -22,6 +37,7 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IClientVerifyService, ClientVerifyService>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
@@ -32,6 +48,7 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 app.UseMiddleware<ValidationExceptionMiddleware>();
+app.UseProblemDetails();
 
 if (app.Environment.IsDevelopment())
 {

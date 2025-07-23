@@ -1,5 +1,6 @@
 using bank_accounts.Account.Commands;
 using bank_accounts.Account.Enums;
+using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
 using MediatR;
 
@@ -8,16 +9,25 @@ namespace bank_accounts.Account.Handlers.Commands;
 public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Models.Account>
 {
     private readonly IAccountService _accountService;
+    private readonly IClientVerifyService _verifyService;
     
-    public CreateAccountCommandHandler(IAccountService accountService)
+    public CreateAccountCommandHandler(IAccountService accountService, IClientVerifyService verifyService)
     {
         _accountService = accountService;
+        _verifyService = verifyService;
     }
     
     public Task<Models.Account> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
         var isInterestAccount = request.AccountType == AccountType.Credit || 
                                 request.AccountType == AccountType.Deposit;
+        
+        if(!_verifyService.VerifyClient(request.OwnerId))
+        {
+            throw new CustomExceptions.OwnerNotFoundException(request.OwnerId);
+
+        }
+        
         
         var account = new Models.Account
         {

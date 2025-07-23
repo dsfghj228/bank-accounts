@@ -8,6 +8,5 @@ public class CreateAccountCommandValidator : AbstractValidator<CreateAccountComm
     public CreateAccountCommandValidator()
     {
         RuleFor(x => x.OwnerId).NotEmpty();
-        RuleFor(x => x.AccountType).NotEmpty();
     }
 }
