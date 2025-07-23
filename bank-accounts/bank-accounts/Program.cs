@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddProblemDetails(o =>
 {
-    o.IncludeExceptionDetails = (ctx, ex) => false;
+    o.IncludeExceptionDetails = (_, _) => false;
     
     o.Map<CustomExceptions.OwnerNotFoundException>(ex => new ProblemDetails
     {
@@ -25,6 +25,14 @@ builder.Services.AddProblemDetails(o =>
     });
     
     o.Map<CustomExceptions.CurrencyDoesNotSupportedException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    o.Map<CustomExceptions.AccountNotFoundException>(ex => new ProblemDetails
     {
         Type = ex.Type,
         Title = ex.Title,
@@ -44,7 +52,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Progr
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
-builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddSingleton<IAccountService, AccountService>();
 builder.Services.AddScoped<IClientVerifyService, ClientVerifyService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
@@ -56,8 +64,8 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-app.UseMiddleware<ValidationExceptionMiddleware>();
 app.UseProblemDetails();
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

@@ -43,4 +43,16 @@ public abstract class CustomExceptions : Exception
         {
         }
     }
+    
+    public class AccountNotFoundException : CustomExceptions
+    {
+        public AccountNotFoundException(Guid accountId)
+            : base(
+                HttpStatusCode.NotFound,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Аккаунт не найден",
+                $"Аккаунт с таким id {accountId} не найден")
+        {
+        }
+    }
 }

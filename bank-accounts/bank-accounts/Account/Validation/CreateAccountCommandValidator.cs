@@ -7,6 +7,9 @@ public class CreateAccountCommandValidator : AbstractValidator<CreateAccountComm
 {
     public CreateAccountCommandValidator()
     {
-        RuleFor(x => x.OwnerId).NotEmpty();
+        RuleFor(x => x.OwnerId)
+            .NotEmpty()
+            .Must(id => id != Guid.Empty)
+            .WithMessage("OwnerId не может быть пустым GUID.");
     }
 }

@@ -12,6 +12,7 @@ namespace bank_accounts.Account.Models
         public decimal? InterestRate { get; set; } // процентная ставка
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
+        public bool IsClosed => ClosedAt.HasValue;
         public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
 }

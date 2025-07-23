@@ -34,4 +34,18 @@ public class AccountController : ControllerBase
         return Ok(result);
         
     }
+
+    [HttpDelete("/account/{accountId}")]
+    public async Task<IActionResult> CloseAccount(Guid accountId)
+    {
+        var command = new CloseAccountCommand
+        {
+            AccountId = accountId
+        };
+        
+        var result = await _mediator.Send(command);
+        
+        return Ok(result);
+        
+    }
 }
