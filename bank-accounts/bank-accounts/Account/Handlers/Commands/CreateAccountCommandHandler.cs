@@ -10,11 +10,16 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
 {
     private readonly IAccountService _accountService;
     private readonly IClientVerifyService _verifyService;
+    private readonly ICurrencyService _currencyService;
     
-    public CreateAccountCommandHandler(IAccountService accountService, IClientVerifyService verifyService)
+    public CreateAccountCommandHandler(
+        IAccountService accountService, 
+        IClientVerifyService verifyService,
+        ICurrencyService currencyService)
     {
         _accountService = accountService;
         _verifyService = verifyService;
+        _currencyService = currencyService;
     }
     
     public Task<Models.Account> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
@@ -27,7 +32,11 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             throw new CustomExceptions.OwnerNotFoundException(request.OwnerId);
 
         }
-        
+
+        if (!_currencyService.IsCurrencySupported(request.Currency))
+        {
+            throw new CustomExceptions.CurrencyDoesNotSupportedException(request.Currency);
+        }
         
         var account = new Models.Account
         {

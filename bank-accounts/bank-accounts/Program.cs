@@ -23,6 +23,14 @@ builder.Services.AddProblemDetails(o =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
+    
+    o.Map<CustomExceptions.CurrencyDoesNotSupportedException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
 });
 
 // Add services to the container.
@@ -38,6 +46,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IClientVerifyService, ClientVerifyService>();
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>

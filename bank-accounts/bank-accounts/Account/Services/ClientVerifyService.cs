@@ -6,6 +6,6 @@ public class ClientVerifyService : IClientVerifyService
 {
     public bool VerifyClient(Guid ownerId)
     {
-        return false;
+        return true;
     }
 }

@@ -1,4 +1,5 @@
 using System.Net;
+using bank_accounts.Account.Enums;
 
 namespace bank_accounts.Account.Exceptions;
 
@@ -25,8 +26,20 @@ public abstract class CustomExceptions : Exception
             : base(
                 HttpStatusCode.NotFound,
                 "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                "Игрок не найден",
-                $"Игрок с таким id {ownerId} не найден")
+                "Владелец не найден",
+                $"Владелец с таким id {ownerId} не найден")
+        {
+        }
+    }
+    
+    public class CurrencyDoesNotSupportedException : CustomExceptions
+    {
+        public CurrencyDoesNotSupportedException(Currency currency)
+            : base(
+                HttpStatusCode.UnprocessableEntity,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Валюта не поддерживается",
+                $"Валюта {currency} не поддерживается")
         {
         }
     }
