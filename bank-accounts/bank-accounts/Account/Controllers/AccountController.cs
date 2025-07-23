@@ -1,5 +1,6 @@
 using bank_accounts.Account.Commands;
 using bank_accounts.Account.Dto;
+using bank_accounts.Account.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,5 +48,18 @@ public class AccountController : ControllerBase
         
         return Ok(result);
         
+    }
+
+    [HttpGet("/accounts")]
+    public async Task<IActionResult> GetUserAccounts(Guid ownerId)
+    {
+        var query = new GetUserAccountsQuery
+        {
+            OwnerId = ownerId
+        };
+        
+        var result = await _mediator.Send(query);
+        
+        return Ok(result);
     }
 }

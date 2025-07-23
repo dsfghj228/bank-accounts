@@ -4,5 +4,6 @@ public interface IAccountService
 {
    void AddAccountToList(Models.Account account); 
    Models.Account CloseAccount(Guid accountId);
+   IList<Models.Account> GetUserAccounts(Guid ownerId);
 }
     

@@ -22,4 +22,11 @@ public class AccountService : IAccountService
         account.ClosedAt = DateTime.Now;
         return account;
     }
+
+    public IList<Models.Account> GetUserAccounts(Guid ownerId)
+    {
+        var accounts = _accounts.Where(a => a.OwnerId == ownerId).ToList();
+        
+        return accounts;
+    }
 }
