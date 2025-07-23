@@ -4,12 +4,17 @@ namespace bank_accounts.Account.Models
 {
     public class Account
     {
-        public Guid Id { get; set; }
-        public Guid OwnerId { get; set; }
-        public AccountType AccountType { get; set; }
-        public Currency Currency { get; set; }
+        private decimal? _interestRate;
+        public Guid Id { get; init; }
+        public Guid OwnerId { get; init; }
+        public AccountType AccountType { get; init; }
+        public string Currency { get; set; } = String.Empty;
         public decimal Balance { get; set; }
-        public decimal? InterestRate { get; set; } // процентная ставка
+        public decimal? InterestRate
+        {
+            get => _interestRate;
+            set => _interestRate = AccountType == AccountType.Checking ? null : value;
+        } // процентная ставка
         public DateTime CreatedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public bool IsClosed => ClosedAt.HasValue;

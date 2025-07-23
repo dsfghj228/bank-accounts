@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
 using bank_accounts.Account.PipelineBehaviors;
@@ -56,7 +57,11 @@ builder.Services.AddSingleton<IAccountService, AccountService>();
 builder.Services.AddScoped<IClientVerifyService, ClientVerifyService>();
 builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "bank-accounts", Version = "v1" });

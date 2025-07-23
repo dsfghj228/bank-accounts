@@ -43,7 +43,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             Id = Guid.NewGuid(),
             OwnerId = request.OwnerId,
             AccountType = request.AccountType,
-            Currency = request.Currency,
+            Currency = request.Currency.GetDescription(),
             Balance = request.Balance,
             InterestRate = isInterestAccount ? request.InterestRate : null,
             CreatedAt = DateTime.Now
