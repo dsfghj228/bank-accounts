@@ -4,7 +4,7 @@ using MediatR;
 
 namespace bank_accounts.Account.Commands;
 
-public record CreateAccountCommand : IRequest<Models.Account>
+public record CreateAccountCommand : IRequest<ReturnAccountDto>
 {
     public Guid OwnerId { get; init; }
     public AccountType AccountType { get; init; }

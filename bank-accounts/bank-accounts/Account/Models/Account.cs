@@ -8,7 +8,7 @@ namespace bank_accounts.Account.Models
         public Guid Id { get; init; }
         public Guid OwnerId { get; init; }
         public AccountType AccountType { get; init; }
-        public string Currency { get; set; } = String.Empty;
+        public Currency Currency { get; set; }
         public decimal Balance { get; set; }
         public decimal? InterestRate
         {

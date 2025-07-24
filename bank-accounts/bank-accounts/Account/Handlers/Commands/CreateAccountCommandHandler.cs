@@ -1,4 +1,6 @@
+using AutoMapper;
 using bank_accounts.Account.Commands;
+using bank_accounts.Account.Dto;
 using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
@@ -6,23 +8,26 @@ using MediatR;
 
 namespace bank_accounts.Account.Handlers.Commands;
 
-public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, Models.Account>
+public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, ReturnAccountDto>
 {
     private readonly IAccountService _accountService;
     private readonly IClientVerifyService _verifyService;
     private readonly ICurrencyService _currencyService;
+    private readonly IMapper _mapper;
     
     public CreateAccountCommandHandler(
         IAccountService accountService, 
         IClientVerifyService verifyService,
-        ICurrencyService currencyService)
+        ICurrencyService currencyService,
+        IMapper mapper)
     {
         _accountService = accountService;
         _verifyService = verifyService;
         _currencyService = currencyService;
+        _mapper = mapper;
     }
     
-    public Task<Models.Account> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+    public Task<ReturnAccountDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
         var isInterestAccount = request.AccountType == AccountType.Credit || 
                                 request.AccountType == AccountType.Deposit;
@@ -43,7 +48,7 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             Id = Guid.NewGuid(),
             OwnerId = request.OwnerId,
             AccountType = request.AccountType,
-            Currency = request.Currency.GetDescription(),
+            Currency = request.Currency,
             Balance = request.Balance,
             InterestRate = isInterestAccount ? request.InterestRate : null,
             CreatedAt = DateTime.Now
@@ -51,6 +56,6 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
         
         _accountService.AddAccountToList(account);
 
-        return Task.FromResult(account);
+        return Task.FromResult(_mapper.Map<ReturnAccountDto>(account));
     }
 }
