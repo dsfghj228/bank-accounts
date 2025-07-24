@@ -72,4 +72,20 @@ public class AccountController : ControllerBase
         var result = await _mediator.Send(command);
         return Ok(result);
     }
+
+    [HttpGet("/accounts/{accountId}")]
+    public async Task<IActionResult> CheckIfAccountExists(Guid accountId)
+    {
+        var query = new CheckIfAccountsExistsQuery()
+        {
+            AccountId = accountId
+        };
+        
+        var result = await _mediator.Send(query);
+        return Ok(new { 
+            Message = "Счёт существует",
+            Account = result 
+        });
+    }
+    
 }

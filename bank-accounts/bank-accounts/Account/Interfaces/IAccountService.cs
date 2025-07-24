@@ -6,5 +6,6 @@ public interface IAccountService
    Models.Account CloseAccount(Guid accountId);
    IList<Models.Account> GetUserAccounts(Guid ownerId);
    Models.Account ChangeInterestRate(Guid accountId, decimal interestRate);
+   Models.Account GetAccountById(Guid accountId);
 }
     

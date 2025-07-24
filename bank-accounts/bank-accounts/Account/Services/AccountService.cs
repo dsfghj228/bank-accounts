@@ -57,4 +57,15 @@ public class AccountService : IAccountService
         account.InterestRate = interestRate;
         return account;
     }
+
+    public Models.Account GetAccountById(Guid accountId)
+    {
+        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        if (account == null)
+        {
+            throw new CustomExceptions.AccountNotFoundException(accountId);
+        }
+        
+        return account;
+    }
 }
