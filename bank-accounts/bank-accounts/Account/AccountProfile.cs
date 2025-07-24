@@ -10,5 +10,7 @@ public class AccountProfile : Profile
     {
         CreateMap<Models.Account, ReturnAccountDto>()
             .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency.GetDescription()));
+        CreateMap<Models.Transaction, ReturnTransactionDto>()
+            .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency.GetDescription()));
     }
 }

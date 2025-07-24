@@ -64,6 +64,30 @@ builder.Services.AddProblemDetails(o =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
+    
+    o.Map<CustomExceptions.InsufficientBalanceException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    o.Map<CustomExceptions.CurriesDontMatchException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    o.Map<CustomExceptions.InvalidTransferException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
 });
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>

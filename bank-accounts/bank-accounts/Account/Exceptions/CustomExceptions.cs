@@ -79,4 +79,41 @@ public abstract class CustomExceptions : Exception
         {
         }
     }
+    
+    public class InsufficientBalanceException: CustomExceptions
+    {
+        public InsufficientBalanceException(Guid accountId)
+            : base(
+                HttpStatusCode.NotFound,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Недостаточно средств",
+                $"На аккаунте с таким id {accountId} недостаточно средств для выполнения операции")
+        {
+        }
+    }
+    
+    public class CurriesDontMatchException: CustomExceptions
+    {
+        public CurriesDontMatchException()
+            : base(
+                HttpStatusCode.NotFound,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Валюты не совпадают",
+                $"Валюты у счетов не совпадают")
+        {
+        }
+    } 
+    
+    
+    public class InvalidTransferException: CustomExceptions
+    {
+        public InvalidTransferException()
+            : base(
+                HttpStatusCode.NotFound,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Неверная операция перевода",
+                $"Операция перевода не может быть выполнена из-за неверных данных")
+        {
+        }
+    } 
 }

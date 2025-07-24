@@ -1,3 +1,4 @@
+using System.Transactions;
 using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
@@ -67,5 +68,78 @@ public class AccountService : IAccountService
         }
         
         return account;
+    }
+
+
+    public Models.Transaction RegisterAccountTransaction(Guid accountId, Guid counterpartyId, decimal amount, Currency currency,
+        string description = "")
+    {
+        if(accountId == counterpartyId)
+        {
+            throw new CustomExceptions.InvalidTransferException();
+        }
+        
+        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        if (account == null)
+        {
+            throw new CustomExceptions.AccountNotFoundException(accountId);
+        }
+        if (account.IsClosed)
+        {
+            throw new CustomExceptions.AccountClosedException(accountId);
+        }
+        
+        var counterpartyAccount = _accounts.Where(a => a.Id == counterpartyId).FirstOrDefault();
+        if (counterpartyAccount == null)
+        {
+            throw new CustomExceptions.AccountNotFoundException(counterpartyId);
+        }
+        if (counterpartyAccount.IsClosed)
+        {
+            throw new CustomExceptions.AccountClosedException(counterpartyId);
+        }
+
+        if (account.Balance < amount)
+        {
+            throw new CustomExceptions.InsufficientBalanceException(accountId);
+        }
+
+        if (account.Currency != counterpartyAccount.Currency)
+        {
+            throw new CustomExceptions.CurriesDontMatchException();
+        }
+        
+        account.Balance -= amount;
+        counterpartyAccount.Balance += amount;
+        
+        var transaction = new Models.Transaction()
+        {
+            Id = Guid.NewGuid(),
+            AccountId = accountId,
+            CounterpartyId = counterpartyId,
+            Amount = amount,
+            Currency = currency,
+            TransactionType = TransactionType.Debit,
+            Description = description,
+            CommitedAt = DateTime.UtcNow
+        };
+        
+        var counterpartyTransaction = new Models.Transaction()
+        {
+            Id = Guid.NewGuid(),
+            AccountId = counterpartyId,
+            CounterpartyId = accountId,
+            Amount = amount,
+            Currency = currency,
+            TransactionType = TransactionType.Credit,
+            Description = description,
+            CommitedAt = DateTime.UtcNow
+        };
+        
+        account.Transactions.Add(transaction);
+        counterpartyAccount.Transactions.Add(counterpartyTransaction);
+        
+        return transaction;
+        
     }
 }
