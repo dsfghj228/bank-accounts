@@ -15,5 +15,6 @@ public interface IAccountService
        decimal amount, 
        Currency currency,  
        string description = "");
+   List<Models.Transaction> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate);
 }
     

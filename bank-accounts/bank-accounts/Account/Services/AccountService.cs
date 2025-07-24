@@ -2,6 +2,7 @@ using System.Transactions;
 using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
+using Transaction = bank_accounts.Account.Models.Transaction;
 
 namespace bank_accounts.Account.Services;
 
@@ -141,5 +142,28 @@ public class AccountService : IAccountService
         
         return transaction;
         
+    }
+
+    public List<Transaction> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate)
+    {
+        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        if (account == null)
+        {
+            throw new CustomExceptions.AccountNotFoundException(accountId);
+        }
+
+        var transactions = account.Transactions.AsQueryable();
+
+        if (startDate.HasValue)
+        {
+            transactions = transactions.Where(t => t.CommitedAt >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            transactions = transactions.Where(t => t.CommitedAt <= endDate.Value);
+        }
+
+        return transactions.ToList();
     }
 }

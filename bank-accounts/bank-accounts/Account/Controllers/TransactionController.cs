@@ -1,5 +1,6 @@
 using bank_accounts.Account.Commands;
 using bank_accounts.Account.Dto;
+using bank_accounts.Account.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,5 +30,18 @@ public class TransactionController : ControllerBase
         };
         var transaction = await _mediator.Send(command);
         return Ok(transaction);
+    }
+    
+    [HttpGet("/transaction/{accountId}")]
+    public async Task<IActionResult> GetAccountStatement(Guid accountId, [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
+    {
+        var query = new GetAccountStatementQuery
+        {
+            AccountId = accountId,
+            From = from,
+            To = to
+        };
+        var transactions = await _mediator.Send(query);
+        return Ok(transactions);
     }
 }
