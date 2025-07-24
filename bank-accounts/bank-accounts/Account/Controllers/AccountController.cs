@@ -8,15 +8,8 @@ namespace bank_accounts.Account.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController : ControllerBase
+public class AccountController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    
-    public AccountController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [HttpPost("/account")]
     public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto accountDto)
     {
@@ -30,7 +23,7 @@ public class AccountController : ControllerBase
             
         };
         
-        var result = await _mediator.Send(account);
+        var result = await mediator.Send(account);
         return Ok(result);
         
     }
@@ -43,7 +36,7 @@ public class AccountController : ControllerBase
             AccountId = accountId
         };
         
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return Ok(result);
         
     }
@@ -56,7 +49,7 @@ public class AccountController : ControllerBase
             OwnerId = ownerId
         };
         
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return Ok(result);
     }
 
@@ -69,7 +62,7 @@ public class AccountController : ControllerBase
             InterestRate = interestRate
         };
         
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return Ok(result);
     }
 
@@ -81,7 +74,7 @@ public class AccountController : ControllerBase
             AccountId = accountId
         };
         
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return Ok(new { 
             Message = "Счёт существует",
             Account = result 

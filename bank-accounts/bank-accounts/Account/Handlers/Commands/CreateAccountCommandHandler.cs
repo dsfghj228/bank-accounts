@@ -8,37 +8,25 @@ using MediatR;
 
 namespace bank_accounts.Account.Handlers.Commands;
 
-public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, ReturnAccountDto>
+public class CreateAccountCommandHandler(
+    IAccountService accountService,
+    IClientVerifyService verifyService,
+    ICurrencyService currencyService,
+    IMapper mapper)
+    : IRequestHandler<CreateAccountCommand, ReturnAccountDto>
 {
-    private readonly IAccountService _accountService;
-    private readonly IClientVerifyService _verifyService;
-    private readonly ICurrencyService _currencyService;
-    private readonly IMapper _mapper;
-    
-    public CreateAccountCommandHandler(
-        IAccountService accountService, 
-        IClientVerifyService verifyService,
-        ICurrencyService currencyService,
-        IMapper mapper)
-    {
-        _accountService = accountService;
-        _verifyService = verifyService;
-        _currencyService = currencyService;
-        _mapper = mapper;
-    }
-    
     public Task<ReturnAccountDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
         var isInterestAccount = request.AccountType == AccountType.Credit || 
                                 request.AccountType == AccountType.Deposit;
         
-        if(!_verifyService.VerifyClient(request.OwnerId))
+        if(!verifyService.VerifyClient(request.OwnerId))
         {
             throw new CustomExceptions.OwnerNotFoundException(request.OwnerId);
 
         }
 
-        if (!_currencyService.IsCurrencySupported(request.Currency))
+        if (!currencyService.IsCurrencySupported(request.Currency))
         {
             throw new CustomExceptions.CurrencyDoesNotSupportedException(request.Currency);
         }
@@ -54,8 +42,8 @@ public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand,
             CreatedAt = DateTime.Now
         };
         
-        _accountService.AddAccountToList(account);
+        accountService.AddAccountToList(account);
 
-        return Task.FromResult(_mapper.Map<ReturnAccountDto>(account));
+        return Task.FromResult(mapper.Map<ReturnAccountDto>(account));
     }
 }

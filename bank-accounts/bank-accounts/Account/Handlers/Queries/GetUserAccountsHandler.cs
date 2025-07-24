@@ -7,28 +7,18 @@ using MediatR;
 
 namespace bank_accounts.Account.Handlers.Queries;
 
-public class GetUserAccountsHandler : IRequestHandler<GetUserAccountsQuery, IList<ReturnAccountDto>>
+public class GetUserAccountsHandler(IAccountService accountService, IClientVerifyService verifyService, IMapper mapper)
+    : IRequestHandler<GetUserAccountsQuery, IList<ReturnAccountDto>>
 {
-    private readonly IAccountService _accountService;
-    private readonly IClientVerifyService _verifyService;
-    private readonly IMapper _mapper;
-    
-    public GetUserAccountsHandler(IAccountService accountService, IClientVerifyService verifyService, IMapper mapper)
-    {
-        _accountService = accountService;
-        _verifyService = verifyService;
-        _mapper = mapper;
-    }
-    
     public Task<IList<ReturnAccountDto>> Handle(GetUserAccountsQuery request, CancellationToken cancellationToken)
     {
-        if (!_verifyService.VerifyClient(request.OwnerId))
+        if (!verifyService.VerifyClient(request.OwnerId))
         {
             throw new CustomExceptions.OwnerNotFoundException(request.OwnerId);
         }
         
-        var accounts = _accountService.GetUserAccounts(request.OwnerId);
+        var accounts = accountService.GetUserAccounts(request.OwnerId);
         
-        return Task.FromResult(_mapper.Map<IList<ReturnAccountDto>>(accounts));
+        return Task.FromResult(mapper.Map<IList<ReturnAccountDto>>(accounts));
     }
 }

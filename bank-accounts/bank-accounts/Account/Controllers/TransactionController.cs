@@ -8,15 +8,8 @@ namespace bank_accounts.Account.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TransactionController : ControllerBase
+public class TransactionController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    
-    public TransactionController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-    
     [HttpPost("/transaction")]
     public async Task<IActionResult> RegisterTransaction([FromBody] CreateTransactionDto transactionDto)
     {
@@ -28,7 +21,7 @@ public class TransactionController : ControllerBase
             Currency = transactionDto.Currency,
             Description = transactionDto.Description
         };
-        var transaction = await _mediator.Send(command);
+        var transaction = await mediator.Send(command);
         return Ok(transaction);
     }
     
@@ -41,7 +34,7 @@ public class TransactionController : ControllerBase
             From = from,
             To = to
         };
-        var transactions = await _mediator.Send(query);
+        var transactions = await mediator.Send(query);
         return Ok(transactions);
     }
 }

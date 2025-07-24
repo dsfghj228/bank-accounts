@@ -6,20 +6,12 @@ using MediatR;
 
 namespace bank_accounts.Account.Handlers.Queries;
 
-public class CheckIfAccountExistsQueryHandler : IRequestHandler<CheckIfAccountsExistsQuery, ReturnAccountDto>
+public class CheckIfAccountExistsQueryHandler(IAccountService accountService, IMapper mapper)
+    : IRequestHandler<CheckIfAccountsExistsQuery, ReturnAccountDto>
 {
-    private readonly IAccountService _accountService;
-    private readonly IMapper _mapper;
-    
-    public CheckIfAccountExistsQueryHandler(IAccountService accountService, IMapper mapper)
-    {
-        _accountService = accountService;
-        _mapper = mapper;
-    }
-    
     public Task<ReturnAccountDto> Handle(CheckIfAccountsExistsQuery request, CancellationToken cancellationToken)
     {
-        var account = _accountService.GetAccountById(request.AccountId);
-        return Task.FromResult(_mapper.Map<ReturnAccountDto>(account));
+        var account = accountService.GetAccountById(request.AccountId);
+        return Task.FromResult(mapper.Map<ReturnAccountDto>(account));
     }
 }

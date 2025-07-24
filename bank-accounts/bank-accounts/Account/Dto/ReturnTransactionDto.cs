@@ -4,10 +4,10 @@ namespace bank_accounts.Account.Dto;
 
 public class ReturnTransactionDto
 {
-    public Guid AccountId { get; set; }
-    public Guid CounterpartyId { get; set; }
-    public decimal Amount { get; set; }
-    public string Currency { get; set; } = string.Empty;
-    public TransactionType TransactionType { get; set; }
-    public string Description { get; set; } = string.Empty;
+    public Guid AccountId { get; init; }
+    public Guid CounterpartyId { get; init; }
+    public decimal Amount { get; init; }
+    public string Currency { get; init; } = string.Empty;
+    public TransactionType TransactionType { get; init; }
+    public string Description { get; init; } = string.Empty;
 }

@@ -6,21 +6,13 @@ using MediatR;
 
 namespace bank_accounts.Account.Handlers.Queries;
 
-public class GetAccountStatementQueryHandler : IRequestHandler<GetAccountStatementQuery, IList<ReturnTransactionDto>>
+public class GetAccountStatementQueryHandler(IAccountService accountService, IMapper mapper)
+    : IRequestHandler<GetAccountStatementQuery, IList<ReturnTransactionDto>>
 {
-    private readonly IAccountService _accountService;
-    private readonly IMapper _mapper;
-    
-    public GetAccountStatementQueryHandler(IAccountService accountService, IMapper mapper)
-    {
-        _accountService = accountService;
-        _mapper = mapper;
-    }
-    
     public Task<IList<ReturnTransactionDto>> Handle(GetAccountStatementQuery request, CancellationToken cancellationToken)
     {
-        var transactions = _accountService.GetAccountTransactions(request.AccountId, request.From, request.To);
+        var transactions = accountService.GetAccountTransactions(request.AccountId, request.From, request.To);
         
-        return Task.FromResult(_mapper.Map<IList<ReturnTransactionDto>>(transactions));
+        return Task.FromResult(mapper.Map<IList<ReturnTransactionDto>>(transactions));
     }
 }

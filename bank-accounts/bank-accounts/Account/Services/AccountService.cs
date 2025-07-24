@@ -1,4 +1,3 @@
-using System.Transactions;
 using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
@@ -17,7 +16,7 @@ public class AccountService : IAccountService
 
     public Models.Account CloseAccount(Guid accountId)
     {
-        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        var account = _accounts.FirstOrDefault(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -41,7 +40,7 @@ public class AccountService : IAccountService
 
     public Models.Account ChangeInterestRate(Guid accountId, decimal interestRate)
     {
-        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        var account = _accounts.FirstOrDefault(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -62,7 +61,7 @@ public class AccountService : IAccountService
 
     public Models.Account GetAccountById(Guid accountId)
     {
-        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        var account = _accounts.FirstOrDefault(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -72,7 +71,7 @@ public class AccountService : IAccountService
     }
 
 
-    public Models.Transaction RegisterAccountTransaction(Guid accountId, Guid counterpartyId, decimal amount, Currency currency,
+    public Transaction RegisterAccountTransaction(Guid accountId, Guid counterpartyId, decimal amount, Currency currency,
         string description = "")
     {
         if(accountId == counterpartyId)
@@ -80,7 +79,7 @@ public class AccountService : IAccountService
             throw new CustomExceptions.InvalidTransferException();
         }
         
-        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        var account = _accounts.FirstOrDefault(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -90,7 +89,7 @@ public class AccountService : IAccountService
             throw new CustomExceptions.AccountClosedException(accountId);
         }
         
-        var counterpartyAccount = _accounts.Where(a => a.Id == counterpartyId).FirstOrDefault();
+        var counterpartyAccount = _accounts.FirstOrDefault(a => a.Id == counterpartyId);
         if (counterpartyAccount == null)
         {
             throw new CustomExceptions.AccountNotFoundException(counterpartyId);
@@ -113,7 +112,7 @@ public class AccountService : IAccountService
         account.Balance -= amount;
         counterpartyAccount.Balance += amount;
         
-        var transaction = new Models.Transaction()
+        var transaction = new Transaction()
         {
             Id = Guid.NewGuid(),
             AccountId = accountId,
@@ -125,7 +124,7 @@ public class AccountService : IAccountService
             CommitedAt = DateTime.UtcNow
         };
         
-        var counterpartyTransaction = new Models.Transaction()
+        var counterpartyTransaction = new Transaction()
         {
             Id = Guid.NewGuid(),
             AccountId = counterpartyId,
@@ -146,7 +145,7 @@ public class AccountService : IAccountService
 
     public List<Transaction> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate)
     {
-        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        var account = _accounts.FirstOrDefault(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
