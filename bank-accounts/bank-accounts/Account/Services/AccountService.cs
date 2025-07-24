@@ -1,3 +1,4 @@
+using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
 
@@ -19,6 +20,12 @@ public class AccountService : IAccountService
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
         }
+
+        if (account.IsClosed)
+        {
+            return account;
+        }
+        
         account.ClosedAt = DateTime.Now;
         return account;
     }
@@ -28,5 +35,26 @@ public class AccountService : IAccountService
         var accounts = _accounts.Where(a => a.OwnerId == ownerId).ToList();
         
         return accounts;
+    }
+
+    public Models.Account ChangeInterestRate(Guid accountId, decimal interestRate)
+    {
+        var account = _accounts.Where(a => a.Id == accountId).FirstOrDefault();
+        if (account == null)
+        {
+            throw new CustomExceptions.AccountNotFoundException(accountId);
+        }
+
+        if (account.IsClosed)
+        {
+            throw new CustomExceptions.AccountClosedException(accountId);
+        }
+
+        if (account.AccountType == AccountType.Checking)
+        {
+            throw new CustomExceptions.CheckingAccountNotSupportInterestRateException();
+        }
+        account.InterestRate = interestRate;
+        return account;
     }
 }

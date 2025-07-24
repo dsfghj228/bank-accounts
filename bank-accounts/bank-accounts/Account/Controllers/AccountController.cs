@@ -31,7 +31,6 @@ public class AccountController : ControllerBase
         };
         
         var result = await _mediator.Send(account);
-            
         return Ok(result);
         
     }
@@ -45,7 +44,6 @@ public class AccountController : ControllerBase
         };
         
         var result = await _mediator.Send(command);
-        
         return Ok(result);
         
     }
@@ -59,7 +57,19 @@ public class AccountController : ControllerBase
         };
         
         var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    [HttpPatch("/account/{accountId}/interest-rate")]
+    public async Task<IActionResult> ChangeInterestRate(Guid accountId, decimal interestRate)
+    {
+        var command = new ChangeInterestRateCommand
+        {
+            AccountId = accountId,
+            InterestRate = interestRate
+        };
         
+        var result = await _mediator.Send(command);
         return Ok(result);
     }
 }

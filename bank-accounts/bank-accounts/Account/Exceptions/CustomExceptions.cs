@@ -55,4 +55,28 @@ public abstract class CustomExceptions : Exception
         {
         }
     }
+    
+    public class CheckingAccountNotSupportInterestRateException: CustomExceptions
+    {
+        public CheckingAccountNotSupportInterestRateException()
+            : base(
+                HttpStatusCode.NotFound,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Аккаунт не поддерживает процентную ставку",
+                $"Аккаунт с типом Checking не поддерживает процентную ставку")
+        {
+        }
+    }
+    
+    public class AccountClosedException: CustomExceptions
+    {
+        public AccountClosedException(Guid accountId)
+            : base(
+                HttpStatusCode.NotFound,
+                "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+                "Аккаунт закрыт",
+                $"Аккаунт с таким id {accountId} закрыт")
+        {
+        }
+    }
 }

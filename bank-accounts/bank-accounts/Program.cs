@@ -17,6 +17,14 @@ builder.Services.AddProblemDetails(o =>
 {
     o.IncludeExceptionDetails = (_, _) => false;
     
+    o.Map<ValidationException>(ex => new ProblemDetails
+    {
+        Title = "Ошибки валидации",
+        Status = StatusCodes.Status400BadRequest,
+        Detail = "Одна или несколько ошибок валидации",
+        Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
+    });
+    
     o.Map<CustomExceptions.OwnerNotFoundException>(ex => new ProblemDetails
     {
         Type = ex.Type,
@@ -40,6 +48,27 @@ builder.Services.AddProblemDetails(o =>
         Status = (int)ex.StatusCode,
         Detail = ex.Message
     });
+    
+    o.Map<CustomExceptions.CheckingAccountNotSupportInterestRateException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+    
+    o.Map<CustomExceptions.AccountClosedException>(ex => new ProblemDetails
+    {
+        Type = ex.Type,
+        Title = ex.Title,
+        Status = (int)ex.StatusCode,
+        Detail = ex.Message
+    });
+});
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
 });
 
 // Add services to the container.
