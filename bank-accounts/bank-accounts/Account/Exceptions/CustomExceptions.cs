@@ -20,8 +20,8 @@ public abstract class CustomExceptions(
         $"Владелец с таким id {ownerId} не найден");
     
     public class CurrencyDoesNotSupportedException(Currency currency) : CustomExceptions(
-        HttpStatusCode.UnprocessableEntity,
-        "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+        HttpStatusCode.BadRequest,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Валюта не поддерживается",
         $"Валюта {currency} не поддерживается");
     
@@ -30,29 +30,29 @@ public abstract class CustomExceptions(
         "Аккаунт не найден",
         $"Аккаунт с таким id {accountId} не найден");
     
-    public class CheckingAccountNotSupportInterestRateException() : CustomExceptions(HttpStatusCode.NotFound,
-        "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    public class CheckingAccountNotSupportInterestRateException() : CustomExceptions(HttpStatusCode.BadRequest,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Аккаунт не поддерживает процентную ставку",
         $"Аккаунт с типом Checking не поддерживает процентную ставку");
     
-    public class AccountClosedException(Guid accountId) : CustomExceptions(HttpStatusCode.NotFound,
-        "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    public class AccountClosedException(Guid accountId) : CustomExceptions(HttpStatusCode.Conflict,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.8",
         "Аккаунт закрыт",
         $"Аккаунт с таким id {accountId} закрыт");
     
-    public class InsufficientBalanceException(Guid accountId) : CustomExceptions(HttpStatusCode.NotFound,
-        "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    public class InsufficientBalanceException(Guid accountId) : CustomExceptions(HttpStatusCode.Conflict,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.8",
         "Недостаточно средств",
         $"На аккаунте с таким id {accountId} недостаточно средств для выполнения операции");
     
-    public class CurriesDontMatchException() : CustomExceptions(HttpStatusCode.NotFound,
-        "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    public class CurriesDontMatchException() : CustomExceptions(HttpStatusCode.BadRequest,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Валюты не совпадают",
         $"Валюты у счетов не совпадают"); 
     
     
-    public class InvalidTransferException() : CustomExceptions(HttpStatusCode.NotFound,
-        "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+    public class InvalidTransferException() : CustomExceptions(HttpStatusCode.BadRequest,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Неверная операция перевода",
         $"Операция перевода не может быть выполнена из-за неверных данных"); 
 }
