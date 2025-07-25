@@ -8,6 +8,7 @@
         <RootNamespace>bank_accounts</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
