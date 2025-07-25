@@ -1,8 +1,7 @@
-namespace bank_accounts.Account.Enums
+namespace bank_accounts.Account.Enums;
+
+public enum TransactionType
 {
-    public enum TransactionType
-    {
-        Credit,
-        Debit
-    }
+    Credit,
+    Debit
 }

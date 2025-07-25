@@ -53,7 +53,7 @@ public class TransactionController(IMediator mediator) : ControllerBase
     /// <response code="200"/>
     /// <response code="400">Некорректные данные запроса</response>
     /// <response code="404">Счет не найден</response>
-    [HttpGet("/transaction/{accountId}")]
+    [HttpGet("/transaction/{accountId:guid}")]
     public async Task<IActionResult> GetAccountStatement(Guid accountId, [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
     {
         var query = new GetAccountStatementQuery

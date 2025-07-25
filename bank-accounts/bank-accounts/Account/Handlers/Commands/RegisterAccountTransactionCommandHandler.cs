@@ -2,7 +2,6 @@ using AutoMapper;
 using bank_accounts.Account.Commands;
 using bank_accounts.Account.Dto;
 using bank_accounts.Account.Interfaces;
-using bank_accounts.Account.Models;
 using MediatR;
 
 namespace bank_accounts.Account.Handlers.Commands;

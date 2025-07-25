@@ -54,7 +54,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     /// <response code="200">Счёт успешно закрыт</response>
     /// <response code="400">Некорректные данные запроса</response>
     /// <response code="404">Счет не найден</response>
-    [HttpDelete("/account/{accountId}")]
+    [HttpDelete("/account/{accountId:guid}")]
     public async Task<IActionResult> CloseAccount(Guid accountId)
     {
         var command = new CloseAccountCommand
@@ -103,7 +103,7 @@ public class AccountController(IMediator mediator) : ControllerBase
     /// </response>
     /// <response code="404">Счет не найден</response>
     /// <response code="409">Аккаунт закрыт</response>
-    [HttpPatch("/account/{accountId}/interest-rate")]
+    [HttpPatch("/account/{accountId:guid}/interest-rate")]
     public async Task<IActionResult> ChangeInterestRate(Guid accountId, decimal interestRate)
     {
         var command = new ChangeInterestRateCommand
@@ -123,10 +123,10 @@ public class AccountController(IMediator mediator) : ControllerBase
     /// <response code="200">Счёт существует</response>
     /// <response code="400">Некорректные данные запроса</response>
     /// <response code="404">Счет не найден</response>
-    [HttpGet("/accounts/{accountId}")]
+    [HttpGet("/accounts/{accountId:guid}")]
     public async Task<IActionResult> CheckIfAccountExists(Guid accountId)
     {
-        var query = new CheckIfAccountsExistsQuery()
+        var query = new CheckIfAccountsExistsQuery
         {
             AccountId = accountId
         };

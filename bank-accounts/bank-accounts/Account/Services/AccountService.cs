@@ -7,7 +7,7 @@ namespace bank_accounts.Account.Services;
 
 public class AccountService : IAccountService
 {
-    private readonly IList<Models.Account> _accounts = new List<Models.Account>();
+    private readonly List<Models.Account> _accounts = [];
 
     public void AddAccountToList(Models.Account account)
     {
@@ -112,7 +112,7 @@ public class AccountService : IAccountService
         account.Balance -= amount;
         counterpartyAccount.Balance += amount;
         
-        var transaction = new Transaction()
+        var transaction = new Transaction
         {
             Id = Guid.NewGuid(),
             AccountId = accountId,
@@ -124,7 +124,7 @@ public class AccountService : IAccountService
             CommitedAt = DateTime.UtcNow
         };
         
-        var counterpartyTransaction = new Transaction()
+        var counterpartyTransaction = new Transaction
         {
             Id = Guid.NewGuid(),
             AccountId = counterpartyId,

@@ -33,7 +33,7 @@ public abstract class CustomExceptions(
     public class CheckingAccountNotSupportInterestRateException() : CustomExceptions(HttpStatusCode.BadRequest,
         "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Аккаунт не поддерживает процентную ставку",
-        $"Аккаунт с типом Checking не поддерживает процентную ставку");
+        "Аккаунт с типом Checking не поддерживает процентную ставку");
     
     public class AccountClosedException(Guid accountId) : CustomExceptions(HttpStatusCode.Conflict,
         "https://tools.ietf.org/html/rfc7231#section-6.5.8",
@@ -48,11 +48,11 @@ public abstract class CustomExceptions(
     public class CurriesDontMatchException() : CustomExceptions(HttpStatusCode.BadRequest,
         "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Валюты не совпадают",
-        $"Валюты у счетов не совпадают"); 
+        "Валюты у счетов не совпадают"); 
     
     
     public class InvalidTransferException() : CustomExceptions(HttpStatusCode.BadRequest,
         "https://tools.ietf.org/html/rfc7231#section-6.5.1",
         "Неверная операция перевода",
-        $"Операция перевода не может быть выполнена из-за неверных данных"); 
+        "Операция перевода не может быть выполнена из-за неверных данных"); 
 }

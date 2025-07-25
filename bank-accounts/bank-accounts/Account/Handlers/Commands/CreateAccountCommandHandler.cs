@@ -17,8 +17,7 @@ public class CreateAccountCommandHandler(
 {
     public Task<ReturnAccountDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
     {
-        var isInterestAccount = request.AccountType == AccountType.Credit || 
-                                request.AccountType == AccountType.Deposit;
+        var isInterestAccount = request.AccountType is AccountType.Credit or AccountType.Deposit;
         
         if(!verifyService.VerifyClient(request.OwnerId))
         {

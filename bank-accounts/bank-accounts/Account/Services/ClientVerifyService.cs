@@ -6,6 +6,6 @@ public class ClientVerifyService : IClientVerifyService
 {
     public bool VerifyClient(Guid ownerId)
     {
-        return true;
+        return ownerId != Guid.Empty;
     }
 }

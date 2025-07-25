@@ -18,7 +18,7 @@ builder.Services.AddProblemDetails(o =>
 {
     o.IncludeExceptionDetails = (_, _) => false;
     
-    o.Map<ValidationException>(ex => new ProblemDetails
+    o.Map<ValidationException>(_ => new ProblemDetails
     {
         Title = "Ошибки валидации",
         Status = StatusCodes.Status400BadRequest,
