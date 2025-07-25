@@ -7,6 +7,7 @@
         <UserSecretsId>aspnet-bank_accounts-11dc87da-a9f3-4ed5-80c6-a22ebbfa3d8a</UserSecretsId>
         <RootNamespace>bank_accounts</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
