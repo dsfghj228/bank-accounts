@@ -7,11 +7,18 @@
         <UserSecretsId>aspnet-bank_accounts-11dc87da-a9f3-4ed5-80c6-a22ebbfa3d8a</UserSecretsId>
         <RootNamespace>bank_accounts</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="12.0.1" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="FluentValidation" Version="12.0.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+        <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
         <PackageReference Include="MediatR" Version="13.0.0" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.6" NoWarn="NU1605"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.6" NoWarn="NU1605"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6"/>
