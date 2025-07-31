@@ -43,26 +43,4 @@ public class TransactionController(IMediator mediator) : ControllerBase
         var transaction = await mediator.Send(command);
         return Ok(transaction);
     }
-    
-    /// <summary>
-    /// Получение выписки по счёту
-    /// </summary>
-    /// <param name="accountId">Id банковского счета</param>
-    /// <param name="from">Дата начала периода</param>
-    /// <param name="to">Дата окончания периода</param>
-    /// <response code="200"/>
-    /// <response code="400">Некорректные данные запроса</response>
-    /// <response code="404">Счет не найден</response>
-    [HttpGet("/transaction/{accountId:guid}")]
-    public async Task<IActionResult> GetAccountStatement(Guid accountId, [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
-    {
-        var query = new GetAccountStatementQuery
-        {
-            AccountId = accountId,
-            From = from,
-            To = to
-        };
-        var transactions = await mediator.Send(query);
-        return Ok(transactions);
-    }
 }

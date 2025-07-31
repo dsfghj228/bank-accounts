@@ -8,5 +8,8 @@ public class GetAccountStatementQueryValidator : AbstractValidator<GetAccountSta
     public GetAccountStatementQueryValidator()
     {
         RuleFor(x => x.AccountId).NotEmpty();
+        RuleFor(x => x.From)
+            .LessThan(x => x.To)
+            .WithMessage("Дата начала периода должна быть меньше даты конца периода.");
     }
 }
