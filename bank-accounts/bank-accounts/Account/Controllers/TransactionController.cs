@@ -1,6 +1,5 @@
 using bank_accounts.Account.Commands;
 using bank_accounts.Account.Dto;
-using bank_accounts.Account.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +37,36 @@ public class TransactionController(IMediator mediator) : ControllerBase
             CounterpartyId = transactionDto.CounterpartyId,
             Amount = transactionDto.Amount,
             Currency = transactionDto.Currency,
+            Description = transactionDto.Description
+        };
+        var transaction = await mediator.Send(command);
+        return Ok(transaction);
+    }
+    
+    /// <summary>
+    /// Зарегистрировать входящую/исходящую транзакцию
+    /// </summary>
+    /// <param name="transactionDto">Данные для транзакции</param>
+    /// <response code="200">Успешное выполнение транзакции</response>
+    /// <response code="400">
+    /// Возможные ошибки:
+    /// - Некорректные данные запроса
+    /// </response>
+    /// <response code="404">Счет не найден</response>
+    /// <response code="409">
+    /// Возможные ошибки:
+    /// - Аккаунт закрыт
+    /// - Недостаточно средств
+    /// </response>
+    [HttpPost("/incoming-outgoing-transaction")]
+    public async Task<IActionResult> RegisterIncomingOutcomingTransaction([FromBody] RegisterIncomingOutgoingTransactionDto transactionDto)
+    {
+        var command = new RegisterIncomingOrOutgoingTransactionsCommand()
+        {
+            AccountId = transactionDto.AccountId,
+            Amount = transactionDto.Amount,
+            Currency = transactionDto.Currency,
+            TransactionType = transactionDto.TransactionType,
             Description = transactionDto.Description
         };
         var transaction = await mediator.Send(command);

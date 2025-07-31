@@ -143,6 +143,49 @@ public class AccountService : IAccountService
         
     }
 
+    public Transaction RegisterIncomingOrOutgoingTransactionsCommand(Guid accountId, decimal amount, Currency currency,
+        TransactionType transactionType, string description = "")
+    {
+        var account = _accounts.FirstOrDefault(a => a.Id == accountId);
+        if (account == null)
+        {
+            throw new CustomExceptions.AccountNotFoundException(accountId);
+        }
+
+        if (account.IsClosed)
+        {
+            throw new CustomExceptions.AccountClosedException(accountId);
+        }
+
+        if (transactionType == TransactionType.Debit)
+        {
+            if (account.Balance < amount)
+            {
+                throw new CustomExceptions.InsufficientBalanceException(accountId);
+            }
+            account.Balance -= amount;
+        } else if (transactionType == TransactionType.Credit)
+        {
+            account.Balance += amount;
+        }
+
+        var transaction = new Transaction
+        {
+            Id = Guid.NewGuid(),
+            AccountId = accountId,
+            Amount = amount,
+            Currency = currency,
+            TransactionType = transactionType,
+            Description = description,
+            CommitedAt = DateTime.UtcNow
+        };
+
+        account.Transactions.Add(transaction);
+
+        return transaction;
+    }
+
+
     public List<Transaction> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate)
     {
         var account = _accounts.FirstOrDefault(a => a.Id == accountId);
