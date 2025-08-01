@@ -140,15 +140,12 @@ var app = builder.Build();
 app.UseProblemDetails();
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options => options.SwaggerEndpoint("v1/swagger.json", "bank-accounts V1"));
-}
+app.UseSwagger();
+app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "bank-accounts V1"));
 
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
