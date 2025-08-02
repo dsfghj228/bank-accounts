@@ -110,14 +110,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = "http://keycloak:8080/realms/BankAccount";
-        //options.Audience = "AccountClient";
+        options.Authority = builder.Configuration["Keycloak:Authority"];
         options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateAudience = false,
-            ValidateIssuer = false,//
-            //ValidIssuer = "http://keycloak:8080/realms/BankAccount",//
+            ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
             };
     });
