@@ -7,6 +7,9 @@ public class CheckIfAccountExistsQueryValidator : AbstractValidator<CheckIfAccou
 {
     public CheckIfAccountExistsQueryValidator()
     {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.AccountId).NotEmpty();
     }
 }

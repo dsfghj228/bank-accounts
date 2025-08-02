@@ -7,6 +7,9 @@ public class RegisterAccountTransactionCommandValidator : AbstractValidator<Regi
 {
     public RegisterAccountTransactionCommandValidator()
     {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.AccountId)
             .NotEmpty()
             .Must(id => id != Guid.Empty)

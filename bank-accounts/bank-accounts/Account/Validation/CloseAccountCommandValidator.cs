@@ -7,6 +7,9 @@ public class CloseAccountCommandValidator : AbstractValidator<CloseAccountComman
 {
     public CloseAccountCommandValidator()
     {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.AccountId)
             .NotEmpty()
             .Must(id => id != Guid.Empty)

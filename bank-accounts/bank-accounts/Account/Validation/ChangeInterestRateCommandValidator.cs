@@ -7,7 +7,9 @@ public class ChangeInterestRateCommandValidator : AbstractValidator<ChangeIntere
 {
     public ChangeInterestRateCommandValidator()
     {
-        RuleFor(x => x.AccountId).NotEmpty();
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.AccountId).NotEmpty();
     }
 }

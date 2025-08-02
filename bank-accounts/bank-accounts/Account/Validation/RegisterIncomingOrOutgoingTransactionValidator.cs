@@ -7,6 +7,9 @@ public class RegisterIncomingOrOutgoingTransactionValidator : AbstractValidator<
 {
    public RegisterIncomingOrOutgoingTransactionValidator()
    {
+      ClassLevelCascadeMode = CascadeMode.Continue;
+      RuleLevelCascadeMode = CascadeMode.Stop;
+      
       RuleFor(x => x.AccountId)
          .NotEmpty()
          .Must(id => id != Guid.Empty)
@@ -15,8 +18,6 @@ public class RegisterIncomingOrOutgoingTransactionValidator : AbstractValidator<
          .NotEmpty()
          .GreaterThan(0)
          .WithMessage("Amount должен быть больше нуля.");
-      RuleFor(x => x.TransactionType)
-         .NotEmpty();
       RuleFor(x => x.Currency)
          .NotEmpty();
    }

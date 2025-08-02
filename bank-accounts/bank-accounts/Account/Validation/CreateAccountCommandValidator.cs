@@ -7,6 +7,9 @@ public class CreateAccountCommandValidator : AbstractValidator<CreateAccountComm
 {
     public CreateAccountCommandValidator()
     {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.OwnerId)
             .NotEmpty()
             .Must(id => id != Guid.Empty)

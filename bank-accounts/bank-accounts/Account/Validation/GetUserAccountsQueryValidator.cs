@@ -7,6 +7,9 @@ public class GetUserAccountsQueryValidator  : AbstractValidator<GetUserAccountsQ
 {
     public GetUserAccountsQueryValidator()
     {
+        ClassLevelCascadeMode = CascadeMode.Continue;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        
         RuleFor(x => x.OwnerId)
             .NotEmpty()
             .Must(id => id != Guid.Empty)
