@@ -2,6 +2,7 @@ using bank_accounts.Account.Commands;
 using bank_accounts.Account.Dto;
 using bank_accounts.Account.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace bank_accounts.Account.Controllers;
@@ -10,6 +11,7 @@ namespace bank_accounts.Account.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class AccountController(IMediator mediator) : ControllerBase
 {
     /// <summary>
