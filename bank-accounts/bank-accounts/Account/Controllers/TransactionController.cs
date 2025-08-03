@@ -1,5 +1,6 @@
 using bank_accounts.Account.Commands;
 using bank_accounts.Account.Dto;
+using bank_accounts.Account.MbResult;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ public class TransactionController(IMediator mediator) : ControllerBase
     /// - Неверная операция перевода
     /// - Валюты не совпадают
     /// </response>
+    /// <response code="401">Не авторизован</response>
     /// <response code="404">Счет не найден</response>
     /// <response code="409">
     /// Возможные ошибки:
@@ -42,7 +44,7 @@ public class TransactionController(IMediator mediator) : ControllerBase
             Description = transactionDto.Description
         };
         var transaction = await mediator.Send(command);
-        return Ok(transaction);
+        return Ok(MbResult<ReturnTransactionDto>.Success(transaction));
     }
     
     /// <summary>
@@ -54,6 +56,7 @@ public class TransactionController(IMediator mediator) : ControllerBase
     /// Возможные ошибки:
     /// - Некорректные данные запроса
     /// </response>
+    /// <response code="401">Не авторизован</response>
     /// <response code="404">Счет не найден</response>
     /// <response code="409">
     /// Возможные ошибки:
@@ -72,6 +75,6 @@ public class TransactionController(IMediator mediator) : ControllerBase
             Description = transactionDto.Description
         };
         var transaction = await mediator.Send(command);
-        return Ok(transaction);
+        return Ok(MbResult<ReturnTransactionDto>.Success(transaction));
     }
 }
