@@ -157,16 +157,18 @@ public class AccountService : IAccountService
             throw new CustomExceptions.AccountClosedException(accountId);
         }
 
-        if (transactionType == TransactionType.Debit)
+        switch (transactionType)
         {
-            if (account.Balance < amount)
-            {
+            case TransactionType.Debit when account.Balance < amount:
                 throw new CustomExceptions.InsufficientBalanceException(accountId);
-            }
-            account.Balance -= amount;
-        } else if (transactionType == TransactionType.Credit)
-        {
-            account.Balance += amount;
+            case TransactionType.Debit:
+                account.Balance -= amount;
+                break;
+            case TransactionType.Credit:
+                account.Balance += amount;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(transactionType), transactionType, null);
         }
 
         var transaction = new Transaction

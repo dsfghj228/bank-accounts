@@ -66,7 +66,7 @@ public class TransactionController(IMediator mediator) : ControllerBase
     [HttpPost("/incoming-outgoing-transaction")]
     public async Task<IActionResult> RegisterIncomingOutcomingTransaction([FromBody] RegisterIncomingOutgoingTransactionDto transactionDto)
     {
-        var command = new RegisterIncomingOrOutgoingTransactionsCommand()
+        var command = new RegisterIncomingOrOutgoingTransactionsCommand
         {
             AccountId = transactionDto.AccountId,
             Amount = transactionDto.Amount,

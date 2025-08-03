@@ -10,5 +10,5 @@ public class RegisterIncomingOrOutgoingTransactionsCommand : IRequest<ReturnTran
     public decimal Amount { get; init; }
     public Currency Currency { get; init; }
     public TransactionType TransactionType { get; init; }
-    public string Description { get; init; } = String.Empty;
+    public string Description { get; init; } = string.Empty;
 }

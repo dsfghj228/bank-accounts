@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Text;
 using System.Text.Json.Serialization;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
@@ -116,8 +115,8 @@ builder.Services.AddAuthentication("Bearer")
         {
             ValidateAudience = false,
             ValidateIssuer = false,
-            ValidateIssuerSigningKey = true,
-            };
+            ValidateIssuerSigningKey = true
+        };
     });
 builder.Services.AddAuthorization();
 
@@ -132,7 +131,7 @@ builder.Services.Configure<JwtBearerOptions>("Bearer", options =>
             Console.WriteLine($"AUTH FAIL: {context.Exception}");
             return Task.CompletedTask;
         },
-        OnTokenValidated = context =>
+        OnTokenValidated = _ =>
         {
             Console.WriteLine("Token is valid!");
             return Task.CompletedTask;
