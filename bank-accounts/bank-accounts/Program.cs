@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using bank_accounts.Account.Data;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
 using bank_accounts.Account.PipelineBehaviors;
@@ -11,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -137,6 +139,11 @@ builder.Services.Configure<JwtBearerOptions>("Bearer", options =>
             return Task.CompletedTask;
         }
     };
+});
+
+builder.Services.AddDbContext<BankAccountsDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
