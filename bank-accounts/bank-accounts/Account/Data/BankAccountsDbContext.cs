@@ -14,5 +14,16 @@ public class BankAccountsDbContext(DbContextOptions<BankAccountsDbContext> optio
             .WithOne()
             .HasForeignKey(t => t.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Models.Account>()
+            .HasIndex(a => a.OwnerId)
+            .HasMethod("hash");
+
+        modelBuilder.Entity<Models.Transaction>()
+            .HasIndex(t => new { t.AccountId, t.CommitedAt });
+
+        modelBuilder.Entity<Models.Transaction>()
+            .HasIndex(t => t.CommitedAt)
+            .HasMethod("btree");
     }
 }
