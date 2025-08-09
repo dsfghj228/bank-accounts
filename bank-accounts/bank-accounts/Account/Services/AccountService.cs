@@ -3,6 +3,7 @@ using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
 using bank_accounts.Account.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Transaction = bank_accounts.Account.Models.Transaction;
 
 namespace bank_accounts.Account.Services;
@@ -240,5 +241,26 @@ public class AccountService : IAccountService
         return await query
                     .OrderByDescending(t => t.CommitedAt)
                     .ToListAsync();
+    }
+    
+    public async Task AccrueInterest(Guid accountId)
+    {
+        await using var connection = new NpgsqlConnection(_context.Database.GetConnectionString());
+        await connection.OpenAsync();
+
+        await using var cmd = new NpgsqlCommand("CALL accrue_interest(@account_id)", connection);
+        cmd.Parameters.AddWithValue("account_id", accountId);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+
+    public async Task AccrueInterestForAllAccounts()
+    {
+        var accountsId = await _context.Accounts.Select(a => a.Id).ToListAsync();
+
+        foreach (var accountId in accountsId)
+        {
+            await AccrueInterest(accountId);
+        }
     }
 }

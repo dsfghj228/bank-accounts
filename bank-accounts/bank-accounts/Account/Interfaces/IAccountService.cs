@@ -23,5 +23,7 @@ public interface IAccountService
        TransactionType transactionType,
        string description = "");
    Task<List<Models.Transaction>> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate);
+   Task AccrueInterest(Guid accountId);
+   public Task AccrueInterestForAllAccounts();
 }
     
