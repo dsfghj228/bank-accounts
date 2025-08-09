@@ -197,6 +197,12 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<BankAccountsDbContext>();
+    db.Database.Migrate();
+}
+
 app.UseProblemDetails();
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
@@ -215,5 +221,6 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+
 
 app.Run();
