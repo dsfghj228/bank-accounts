@@ -1,3 +1,4 @@
+using System.Data;
 using bank_accounts.Account.Data;
 using bank_accounts.Account.Enums;
 using bank_accounts.Account.Exceptions;
@@ -90,13 +91,14 @@ public class AccountService : IAccountService
     {
         if(accountId == counterpartyId)
         {
-            throw new CustomExceptions.InvalidTransferException();
+            throw new CustomExceptions.InvalidTransferException("Account не counterparty могут быть одинаковыми");
         }
         
-        await using var dbTransaction = await _context.Database.BeginTransactionAsync();
+        await using var dbTransaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
         try
         {
+            var totalBalanceBeforeTransaction = await _context.Accounts.SumAsync(a => a.Balance);
             var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
             if (account == null)
             {
@@ -157,14 +159,21 @@ public class AccountService : IAccountService
             await _context.Transactions.AddAsync(transaction);
             await _context.Transactions.AddAsync(counterpartyTransaction);
             await _context.SaveChangesAsync();
+            var totalBalanceAfterTransaction = await _context.Accounts.SumAsync(a => a.Balance);
+            if (!totalBalanceBeforeTransaction.Equals(totalBalanceAfterTransaction))
+            {
+                await dbTransaction.RollbackAsync();
+                throw new CustomExceptions.InvalidBalanceStateException(totalBalanceBeforeTransaction, totalBalanceAfterTransaction);
+            }
+
             await dbTransaction.CommitAsync(); 
         
             return transaction;
         }
-        catch
+        catch (Exception e)
         {
             await dbTransaction.RollbackAsync();
-            throw;
+            throw new CustomExceptions.InvalidTransferException(e.Message);
         }
         
     }
@@ -172,46 +181,56 @@ public class AccountService : IAccountService
     public async Task<Transaction> RegisterIncomingOrOutgoingTransactionsCommand(Guid accountId, decimal amount, Currency currency,
         TransactionType transactionType, string description = "")
     {
-        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
-        if (account == null)
+        await using var dbTransaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        try
         {
-            throw new CustomExceptions.AccountNotFoundException(accountId);
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+            if (account == null)
+            {
+                throw new CustomExceptions.AccountNotFoundException(accountId);
+            }
+
+            if (account.IsClosed)
+            {
+                throw new CustomExceptions.AccountClosedException(accountId);
+            }
+
+            switch (transactionType)
+            {
+                case TransactionType.Debit when account.Balance < amount:
+                    throw new CustomExceptions.InsufficientBalanceException(accountId);
+                case TransactionType.Debit:
+                    account.Balance -= amount;
+                    break;
+                case TransactionType.Credit:
+                    account.Balance += amount;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(transactionType), transactionType, null);
+            }
+
+            var transaction = new Transaction
+            {
+                Id = Guid.NewGuid(),
+                AccountId = accountId,
+                Amount = amount,
+                Currency = currency,
+                TransactionType = transactionType,
+                Description = description,
+                CommitedAt = DateTime.UtcNow
+            };
+
+            await _context.Transactions.AddAsync(transaction);
+            await _context.SaveChangesAsync();
+            await dbTransaction.CommitAsync(); 
+            
+            return transaction;
         }
-
-        if (account.IsClosed)
+        catch (Exception e)
         {
-            throw new CustomExceptions.AccountClosedException(accountId);
+            await dbTransaction.RollbackAsync();
+            throw new CustomExceptions.InvalidTransferException(e.Message);
         }
-
-        switch (transactionType)
-        {
-            case TransactionType.Debit when account.Balance < amount:
-                throw new CustomExceptions.InsufficientBalanceException(accountId);
-            case TransactionType.Debit:
-                account.Balance -= amount;
-                break;
-            case TransactionType.Credit:
-                account.Balance += amount;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(transactionType), transactionType, null);
-        }
-
-        var transaction = new Transaction
-        {
-            Id = Guid.NewGuid(),
-            AccountId = accountId,
-            Amount = amount,
-            Currency = currency,
-            TransactionType = transactionType,
-            Description = description,
-            CommitedAt = DateTime.UtcNow
-        };
-
-        await _context.Transactions.AddAsync(transaction);
-        await _context.SaveChangesAsync();
-
-        return transaction;
     }
 
 
