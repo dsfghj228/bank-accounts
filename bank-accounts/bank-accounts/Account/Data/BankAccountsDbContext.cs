@@ -14,10 +14,21 @@ public class BankAccountsDbContext(DbContextOptions<BankAccountsDbContext> optio
             .WithOne()
             .HasForeignKey(t => t.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Models.Account>()
+            .Property(a => a.InterestRate)
+            .HasColumnType("numeric(18, 6)");
 
         modelBuilder.Entity<Models.Account>()
             .HasIndex(a => a.OwnerId)
             .HasMethod("hash");
+        
+        modelBuilder.Entity<Models.Account>()
+            .Property(u => u.Xmin)
+            .HasColumnName("xmin")
+            .IsRowVersion()
+            .ValueGeneratedOnAddOrUpdate()
+            .IsConcurrencyToken();
 
         modelBuilder.Entity<Models.Transaction>()
             .HasIndex(t => new { t.AccountId, t.CommitedAt });

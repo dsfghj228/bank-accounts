@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using bank_accounts.Account.Data;
@@ -11,9 +12,11 @@ using bank_accounts.Account.Data;
 namespace bank_accounts.Migrations
 {
     [DbContext(typeof(BankAccountsDbContext))]
-    partial class BankAccountsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250809223557_AddOptimisticBlocking")]
+    partial class AddOptimisticBlocking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace bank_accounts.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal?>("InterestRate")
-                        .HasColumnType("numeric(18, 6)");
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");

@@ -40,7 +40,14 @@ public class AccountService : IAccountService
         
         account.ClosedAt = DateTime.UtcNow;
         
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new CustomExceptions.ConcurrencyConflictException(accountId);
+        }
         
         return account;
     }
@@ -70,7 +77,14 @@ public class AccountService : IAccountService
             throw new CustomExceptions.CheckingAccountNotSupportInterestRateException();
         }
         account.InterestRate = interestRate;
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new CustomExceptions.ConcurrencyConflictException(accountId);
+        }
         
         return account;
     }
@@ -158,7 +172,15 @@ public class AccountService : IAccountService
         
             await _context.Transactions.AddAsync(transaction);
             await _context.Transactions.AddAsync(counterpartyTransaction);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new CustomExceptions.ConcurrencyConflictException(accountId);
+            }
+            
             var totalBalanceAfterTransaction = await _context.Accounts.SumAsync(a => a.Balance);
             if (!totalBalanceBeforeTransaction.Equals(totalBalanceAfterTransaction))
             {
@@ -221,7 +243,14 @@ public class AccountService : IAccountService
             };
 
             await _context.Transactions.AddAsync(transaction);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw new CustomExceptions.ConcurrencyConflictException(accountId);
+            }
             await dbTransaction.CommitAsync(); 
             
             return transaction;

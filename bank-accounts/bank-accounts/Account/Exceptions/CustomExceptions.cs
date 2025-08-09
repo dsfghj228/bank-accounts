@@ -60,4 +60,9 @@ public abstract class CustomExceptions(
         "https://tools.ietf.org/html/rfc7231#section-6.5.8",
         "Неверное состояние баланса",
         $"Баланс аккаунта изменился с {balanceBefore} на {balanceAfter} в процессе транзакции, что недопустимо");
+    
+    public class ConcurrencyConflictException(Guid accountId) : CustomExceptions(HttpStatusCode.Conflict,
+        "https://tools.ietf.org/html/rfc7231#section-6.5.8",
+        "Конфликт параллельных изменений",
+        $"Аккаунт {accountId} был изменен другим пользователем.");
 }

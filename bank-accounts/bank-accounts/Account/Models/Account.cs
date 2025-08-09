@@ -21,4 +21,6 @@ public class Account
     public DateTime? ClosedAt { get; set; }
     public bool IsClosed => ClosedAt.HasValue;
     public ICollection<Transaction> Transactions { get; } = new List<Transaction>();
+    
+    public uint Xmin { get; set; }
 }
