@@ -12,8 +12,8 @@ using bank_accounts.Account.Data;
 namespace bank_accounts.Migrations
 {
     [DbContext(typeof(BankAccountsDbContext))]
-    [Migration("20250809225715_CorrectedTypesProblem")]
-    partial class CorrectedTypesProblem
+    [Migration("20250810110816_CorrectedNumericProblem")]
+    partial class CorrectedNumericProblem
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace bank_accounts.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("numeric");
+                        .HasColumnType("decimal(38, 10)");
 
                     b.Property<DateTime?>("ClosedAt")
                         .HasColumnType("timestamp with time zone");
@@ -47,7 +47,7 @@ namespace bank_accounts.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal?>("InterestRate")
-                        .HasColumnType("numeric(18, 6)");
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");

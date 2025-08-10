@@ -32,7 +32,7 @@ namespace bank_accounts.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Balance")
-                        .HasColumnType("numeric");
+                        .HasColumnType("decimal(38, 10)");
 
                     b.Property<DateTime?>("ClosedAt")
                         .HasColumnType("timestamp with time zone");
@@ -44,7 +44,7 @@ namespace bank_accounts.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal?>("InterestRate")
-                        .HasColumnType("numeric(18, 6)");
+                        .HasColumnType("numeric");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");

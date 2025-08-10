@@ -5,32 +5,30 @@
 namespace bank_accounts.Migrations
 {
     /// <inheritdoc />
-    public partial class CorrectedTypesProblem : Migration
+    public partial class CorrectedNumericProblem : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<decimal>(
-                name: "InterestRate",
+                name: "Balance",
                 table: "Accounts",
-                type: "numeric(18,6)",
-                nullable: true,
+                type: "numeric(38,10)",
+                nullable: false,
                 oldClrType: typeof(decimal),
-                oldType: "numeric",
-                oldNullable: true);
+                oldType: "numeric");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<decimal>(
-                name: "InterestRate",
+                name: "Balance",
                 table: "Accounts",
                 type: "numeric",
-                nullable: true,
+                nullable: false,
                 oldClrType: typeof(decimal),
-                oldType: "numeric(18,6)",
-                oldNullable: true);
+                oldType: "numeric(38,10)");
         }
     }
 }

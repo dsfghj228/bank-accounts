@@ -15,9 +15,9 @@ public class BankAccountsDbContext(DbContextOptions<BankAccountsDbContext> optio
             .HasForeignKey(t => t.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
         
-        modelBuilder.Entity<Models.Account>()
-            .Property(a => a.InterestRate)
-            .HasColumnType("numeric(18, 6)");
+        // modelBuilder.Entity<Models.Account>()
+        //     .Property(a => a.InterestRate)
+        //     .HasColumnType("numeric(18, 6)");
 
         modelBuilder.Entity<Models.Account>()
             .HasIndex(a => a.OwnerId)

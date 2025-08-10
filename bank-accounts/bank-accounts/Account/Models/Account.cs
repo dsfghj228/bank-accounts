@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using bank_accounts.Account.Enums;
 using JetBrains.Annotations;
 
@@ -11,6 +12,7 @@ public class Account
     public Guid OwnerId { get; init; }
     public AccountType AccountType { get; init; }
     public Currency Currency { get; init; }
+    [Column(TypeName = "decimal(38, 10)")]
     public decimal Balance { get; set; }
     public decimal? InterestRate
     {
