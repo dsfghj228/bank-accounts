@@ -123,7 +123,7 @@ public class AccountServiceUnitTests
                 var accountFrom = new Account.Models.Account
                 {
                     Id = accountIdFrom,
-                    OwnerId = Guid.NewGuid(),
+                    // OwnerId = Guid.NewGuid(),
                     AccountType = AccountType.Checking,
                     Currency = Currency.Rub,
                     Balance = 1000,
