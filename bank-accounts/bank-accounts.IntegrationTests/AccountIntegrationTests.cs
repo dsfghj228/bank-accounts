@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using bank_accounts.Account.Data;
 using bank_accounts.Account.Dto;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,23 +10,21 @@ public class AccountIntegrationTests(CustomWebApplicationFactory factory)
     : IClassFixture<CustomWebApplicationFactory>
 {
     private readonly HttpClient _client = factory.CreateClient();
-    
-    private readonly CustomWebApplicationFactory _factory = factory;
-    
+
     [Fact]
     public async Task FiftyParallelTransfers_ShouldKeepTotalBalance_AndAllowConflicts()
     {
-        using var scope = _factory.Services.CreateScope();
+        using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<BankAccountsDbContext>();
 
         var accounts = await dbContext.Accounts.Where(a => a.ClosedAt == null && a.Balance > 50).Take(2).ToListAsync();
         var fromAccount = accounts[0];
         var toAccount = accounts[1];
 
-        decimal initialTotalBalance = await dbContext.Accounts.SumAsync(a => a.Balance);
+        var initialTotalBalance = await dbContext.Accounts.SumAsync(a => a.Balance);
 
         var tasks = new List<Task<HttpResponseMessage>>();
-        for (int i = 0; i < 50; i++)
+        for (var i = 0; i < 50; i++)
         {
             var dto = new CreateTransactionDto
             {
@@ -42,36 +39,37 @@ public class AccountIntegrationTests(CustomWebApplicationFactory factory)
 
         var responses = await Task.WhenAll(tasks);
 
-        // Проверяем, что хотя бы один запрос успешен
         Assert.Contains(responses, r => r.IsSuccessStatusCode);
 
-        // Можно вывести ошибки для диагностики, если нужно
         foreach (var response in responses)
         {
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode) continue;
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            switch (response.StatusCode)
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    // 409 - разрешаем
+                case System.Net.HttpStatusCode.Conflict:
+                    
                     continue;
-                }
-                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                case System.Net.HttpStatusCode.BadRequest:
                 {
                     var content = await response.Content.ReadAsStringAsync();
                     if (!content.Contains("transient failure", StringComparison.OrdinalIgnoreCase))
                     {
-                        Assert.False(true, $"Unexpected 400 failure without transient failure message: {content}");
+                        Assert.Fail($"Unexpected 400 failure without transient failure message: {content}");
                     }
+
+                    break;
                 }
-                else
+                default:
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    Assert.False(true, $"Unexpected failure: {(int)response.StatusCode} - {content}");
+                    Assert.Fail($"Unexpected failure: {(int)response.StatusCode} - {content}");
+                    break;
                 }
             }
         }
 
-        decimal finalTotalBalance = await dbContext.Accounts.SumAsync(a => a.Balance);
+        var finalTotalBalance = await dbContext.Accounts.SumAsync(a => a.Balance);
         Assert.Equal(initialTotalBalance, finalTotalBalance);
     }
 
@@ -79,8 +77,8 @@ public class AccountIntegrationTests(CustomWebApplicationFactory factory)
     [Fact]
     public async Task UpdateAccount_ShouldThrowConcurrencyException()
     {
-        using var scope1 = _factory.Services.CreateScope();
-        using var scope2 = _factory.Services.CreateScope();
+        using var scope1 = factory.Services.CreateScope();
+        using var scope2 = factory.Services.CreateScope();
 
         var db1 = scope1.ServiceProvider.GetRequiredService<BankAccountsDbContext>();
         var db2 = scope2.ServiceProvider.GetRequiredService<BankAccountsDbContext>();

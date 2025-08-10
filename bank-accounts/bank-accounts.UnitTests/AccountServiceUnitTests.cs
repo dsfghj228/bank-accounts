@@ -95,8 +95,11 @@ public class AccountServiceUnitTests
             var updatedDepositAccount = await service.ChangeInterestRate(accountDepositId, 4);
             
             Assert.That(updatedCreditAccount, Is.Not.Null);
-            Assert.That(updatedCreditAccount.InterestRate, Is.EqualTo(10));
-            Assert.That(updatedDepositAccount, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedCreditAccount.InterestRate, Is.EqualTo(10));
+                Assert.That(updatedDepositAccount, Is.Not.Null);
+            });
             Assert.That(updatedDepositAccount.InterestRate, Is.EqualTo(4));
         }
         
@@ -154,15 +157,21 @@ public class AccountServiceUnitTests
                 var transaction = await service.RegisterAccountTransaction(accountIdFrom, accountIdTo, 500, Currency.Rub, "Перевод средств");
 
                 Assert.That(transaction, Is.Not.Null);
-                Assert.That(transaction.Amount, Is.EqualTo(500));
-                Assert.That(transaction.Description, Is.EqualTo("Перевод средств"));
-    
+                Assert.Multiple(() =>
+                {
+                    Assert.That(transaction.Amount, Is.EqualTo(500));
+                    Assert.That(transaction.Description, Is.EqualTo("Перевод средств"));
+                });
+
                 var updatedAccountFrom = await context.Accounts.FindAsync(accountIdFrom);
                 var updatedAccountTo = await context.Accounts.FindAsync(accountIdTo);
 
                 Assert.That(updatedAccountFrom, Is.Not.Null);
-                Assert.That(updatedAccountFrom.Balance, Is.EqualTo(500));
-                Assert.That(updatedAccountTo, Is.Not.Null);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(updatedAccountFrom.Balance, Is.EqualTo(500));
+                    Assert.That(updatedAccountTo, Is.Not.Null);
+                });
                 Assert.That(updatedAccountTo.Balance, Is.EqualTo(500));
             }
         } 

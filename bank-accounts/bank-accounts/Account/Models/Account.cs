@@ -19,10 +19,10 @@ public class Account
         [UsedImplicitly] get => _interestRate;
         set => _interestRate = AccountType == AccountType.Checking ? null : value;
     } // процентная ставка
-    public DateTime CreatedAt { [UsedImplicitly] get; set; }
+    public DateTime CreatedAt { [UsedImplicitly] get; init; }
     public DateTime? ClosedAt { get; set; }
     public bool IsClosed => ClosedAt.HasValue;
     public ICollection<Transaction> Transactions { get; } = new List<Transaction>();
     
-    public uint Xmin { get; set; }
+    public uint Xmin { get; init; }
 }

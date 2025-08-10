@@ -221,7 +221,7 @@ app.UseCors("AllowAll");
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
+    Authorization = [new HangfireDashboardAuthorizationFilter()]
 });
 
 RecurringJob.AddOrUpdate<AccountService>(
@@ -242,4 +242,4 @@ app.MapControllers();
 
 app.Run();
 
-public partial class Program { }
+public partial class Program;

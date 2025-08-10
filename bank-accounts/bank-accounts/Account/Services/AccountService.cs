@@ -9,25 +9,17 @@ using Transaction = bank_accounts.Account.Models.Transaction;
 
 namespace bank_accounts.Account.Services;
 
-public class AccountService : IAccountService
+public class AccountService(BankAccountsDbContext context) : IAccountService
 {
-    private readonly List<Models.Account> _accounts = [];
-    private readonly BankAccountsDbContext _context;
-    
-    public AccountService(BankAccountsDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task AddAccountToList(Models.Account account)
     {
-        await _context.Accounts.AddAsync(account);
-        await _context.SaveChangesAsync();
+        await context.Accounts.AddAsync(account);
+        await context.SaveChangesAsync();
     }
 
     public async Task<Models.Account> CloseAccount(Guid accountId)
     {
-        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+        var account = await context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -42,7 +34,7 @@ public class AccountService : IAccountService
         
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -54,14 +46,14 @@ public class AccountService : IAccountService
 
     public async Task<IList<Models.Account>> GetUserAccounts(Guid ownerId)
     {
-        var accounts = await _context.Accounts.Where(a => a.OwnerId == ownerId).ToListAsync();
+        var accounts = await context.Accounts.Where(a => a.OwnerId == ownerId).ToListAsync();
         
         return accounts;
     }
 
     public async Task<Models.Account> ChangeInterestRate(Guid accountId, decimal interestRate)
     {
-        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+        var account = await context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -79,7 +71,7 @@ public class AccountService : IAccountService
         account.InterestRate = interestRate;
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -91,7 +83,7 @@ public class AccountService : IAccountService
 
     public async Task<Models.Account> GetAccountById(Guid accountId)
     {
-        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+        var account = await context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
         if (account == null)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -108,12 +100,12 @@ public class AccountService : IAccountService
             throw new CustomExceptions.InvalidTransferException("Account не counterparty могут быть одинаковыми");
         }
         
-        await using var dbTransaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        await using var dbTransaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
         try
         {
-            var totalBalanceBeforeTransaction = await _context.Accounts.SumAsync(a => a.Balance);
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+            var totalBalanceBeforeTransaction = await context.Accounts.SumAsync(a => a.Balance);
+            var account = await context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
             if (account == null)
             {
                 throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -123,7 +115,7 @@ public class AccountService : IAccountService
                 throw new CustomExceptions.AccountClosedException(accountId);
             }
             
-            var counterpartyAccount = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == counterpartyId);
+            var counterpartyAccount = await context.Accounts.FirstOrDefaultAsync(a => a.Id == counterpartyId);
             if (counterpartyAccount == null)
             {
                 throw new CustomExceptions.AccountNotFoundException(counterpartyId);
@@ -170,18 +162,18 @@ public class AccountService : IAccountService
                 CommitedAt = DateTime.UtcNow
             };
         
-            await _context.Transactions.AddAsync(transaction);
-            await _context.Transactions.AddAsync(counterpartyTransaction);
+            await context.Transactions.AddAsync(transaction);
+            await context.Transactions.AddAsync(counterpartyTransaction);
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw new CustomExceptions.ConcurrencyConflictException(accountId);
             }
             
-            var totalBalanceAfterTransaction = await _context.Accounts.SumAsync(a => a.Balance);
+            var totalBalanceAfterTransaction = await context.Accounts.SumAsync(a => a.Balance);
             if (!totalBalanceBeforeTransaction.Equals(totalBalanceAfterTransaction))
             {
                 await dbTransaction.RollbackAsync();
@@ -203,10 +195,10 @@ public class AccountService : IAccountService
     public async Task<Transaction> RegisterIncomingOrOutgoingTransactionsCommand(Guid accountId, decimal amount, Currency currency,
         TransactionType transactionType, string description = "")
     {
-        await using var dbTransaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        await using var dbTransaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         try
         {
-            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
+            var account = await context.Accounts.FirstOrDefaultAsync(a => a.Id == accountId);
             if (account == null)
             {
                 throw new CustomExceptions.AccountNotFoundException(accountId);
@@ -242,10 +234,10 @@ public class AccountService : IAccountService
                 CommitedAt = DateTime.UtcNow
             };
 
-            await _context.Transactions.AddAsync(transaction);
+            await context.Transactions.AddAsync(transaction);
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -265,13 +257,13 @@ public class AccountService : IAccountService
 
     public async Task<List<Transaction>> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate)
     {
-        bool accountExists = await _context.Accounts.AnyAsync(a => a.Id == accountId);
+        var accountExists = await context.Accounts.AnyAsync(a => a.Id == accountId);
         if (!accountExists)
         {
             throw new CustomExceptions.AccountNotFoundException(accountId);
         }
 
-        var query = _context.Transactions
+        var query = context.Transactions
             .Where(t => t.AccountId == accountId);
 
         if (startDate.HasValue)
@@ -280,7 +272,10 @@ public class AccountService : IAccountService
             query = query.Where(t => t.CommitedAt >= utcStartDate);
         }
 
-        if (endDate.HasValue)
+        if (!endDate.HasValue)
+            return await query
+                .OrderByDescending(t => t.CommitedAt)
+                .ToListAsync();
         {
             var utcEndDate = endDate.Value.ToUniversalTime();
             query = query.Where(t => t.CommitedAt <= utcEndDate);
@@ -293,7 +288,7 @@ public class AccountService : IAccountService
     
     public async Task AccrueInterest(Guid accountId)
     {
-        await using var connection = new NpgsqlConnection(_context.Database.GetConnectionString());
+        await using var connection = new NpgsqlConnection(context.Database.GetConnectionString());
         await connection.OpenAsync();
 
         await using var cmd = new NpgsqlCommand("CALL accrue_interest(@account_id)", connection);
@@ -304,7 +299,7 @@ public class AccountService : IAccountService
 
     public async Task AccrueInterestForAllAccounts()
     {
-        var accountsId = await _context.Accounts.Select(a => a.Id).ToListAsync();
+        var accountsId = await context.Accounts.Select(a => a.Id).ToListAsync();
 
         foreach (var accountId in accountsId)
         {

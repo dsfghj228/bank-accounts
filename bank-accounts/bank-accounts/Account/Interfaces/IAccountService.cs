@@ -23,7 +23,9 @@ public interface IAccountService
        TransactionType transactionType,
        string description = "");
    Task<List<Models.Transaction>> GetAccountTransactions(Guid accountId, DateTime? startDate, DateTime? endDate);
+   // ReSharper disable once UnusedMemberInSuper.Global
    Task AccrueInterest(Guid accountId);
+   // ReSharper disable once UnusedMemberInSuper.Global
    public Task AccrueInterestForAllAccounts();
 }
     
